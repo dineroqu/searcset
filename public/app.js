@@ -11,6 +11,10 @@ let isDownloading = false;
 let currentSessionId = null;
 let pollInterval = null;
 
+// Build base URL without embedded credentials (user:pass@host)
+const _loc = window.location;
+const API_BASE = `${_loc.protocol}//${_loc.hostname}${_loc.port ? ':' + _loc.port : ''}`;
+
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', () => {
   updateHistoryUI();
@@ -62,7 +66,7 @@ async function startScan() {
 
   try {
     // Start scan
-    const res = await fetch('/api/scan', {
+    const res = await fetch(`${API_BASE}/api/scan`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
@@ -96,7 +100,7 @@ function pollForResults(sessionId) {
   let dots = 0;
   pollInterval = setInterval(async () => {
     try {
-      const res = await fetch(`/api/scan/${sessionId}`);
+      const res = await fetch(`${API_BASE}/api/scan/${sessionId}`);
       const data = await res.json();
 
       if (data.status === 'complete') {
@@ -288,7 +292,7 @@ async function downloadAsset(index) {
     });
 
     const a = document.createElement('a');
-    a.href = '/api/download?' + params.toString();
+    a.href = `${API_BASE}/api/download?` + params.toString();
     a.download = filename;
     a.style.display = 'none';
     document.body.appendChild(a);
@@ -310,7 +314,7 @@ async function downloadWithProgress(asset, queueIdx) {
   updateQueueStatus(queueIdx, 'downloading', 0);
 
   try {
-    const res = await fetch('/api/download', {
+    const res = await fetch(`${API_BASE}/api/download`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
