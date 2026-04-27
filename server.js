@@ -4,6 +4,9 @@ const path = require('path');
 const { scanUrl } = require('./lib/scanner');
 const { proxyDownload } = require('./lib/downloader');
 
+// Ensure DISPLAY is set for headed browser mode
+if (!process.env.DISPLAY) process.env.DISPLAY = ':0';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
