@@ -233,25 +233,30 @@ function renderAssets(assets) {
     const filename = asset.filename || truncateUrl(asset.url);
     const size = asset.size ? formatSize(asset.size) : '---';
     const isMain = asset.isMainVideo;
+    const canPreview = isPreviewable(asset);
 
     return `
       <div class="asset-card ${isMain ? 'main-video' : ''} fade-in" style="animation-delay: ${idx * 30}ms" data-type="${asset.type}">
-        <span class="asset-type-badge ${badgeClass}">${typeLabel}</span>
-        <div class="asset-info">
-          <div class="asset-filename" title="${escapeHtml(asset.url)}">
-            ${isMain ? '<span class="main-video-tag">MAIN VIDEO</span> ' : ''}
-            ${escapeHtml(filename)}
+        <div class="asset-card-main">
+          <span class="asset-type-badge ${badgeClass}">${typeLabel}</span>
+          <div class="asset-info">
+            <div class="asset-filename" title="${escapeHtml(asset.url)}">
+              ${isMain ? '<span class="main-video-tag">MAIN VIDEO</span> ' : ''}
+              ${escapeHtml(filename)}
+            </div>
+            <div class="asset-meta">
+              <span>${size}</span>
+              <span>${asset.contentType || asset.extension || '?'}</span>
+              <span>via ${asset.source}</span>
+            </div>
           </div>
-          <div class="asset-meta">
-            <span>${size}</span>
-            <span>${asset.contentType || asset.extension || '?'}</span>
-            <span>via ${asset.source}</span>
+          <div class="asset-actions">
+            ${canPreview ? `<button class="preview-toggle" onclick="togglePreview(this, ${idx})" title="Preview">&#9654;</button>` : ''}
+            <button class="queue-btn" onclick="addToQueue(${idx})" title="Add to queue">+ Q</button>
+            <button class="dl-btn" onclick="downloadAsset(${idx})">DOWNLOAD</button>
           </div>
         </div>
-        <div class="asset-actions">
-          <button class="queue-btn" onclick="addToQueue(${idx})" title="Add to queue">+ Q</button>
-          <button class="dl-btn" onclick="downloadAsset(${idx})">DOWNLOAD</button>
-        </div>
+        <div class="asset-preview" id="preview-${idx}"></div>
       </div>
     `;
   }).join('');
@@ -279,7 +284,8 @@ function filterAssets(filter, tabEl) {
 
 // ---- Download ----
 async function downloadAsset(index) {
-  const asset = currentAssets[index];
+  const filtered = getFilteredAssets();
+  const asset = filtered[index];
   if (!asset) return;
 
   const filename = asset.filename || 'download' + (asset.extension || '');
@@ -365,7 +371,8 @@ async function downloadWithProgress(asset, queueIdx) {
 
 // ---- Queue ----
 function addToQueue(index) {
-  const asset = currentAssets[index];
+  const filtered = getFilteredAssets();
+  const asset = filtered[index];
   if (!asset) return;
 
   const filename = asset.filename || 'download' + (asset.extension || '');
@@ -482,6 +489,76 @@ function toggleHistory() {
   const isOpen = list.style.display !== 'none';
   list.style.display = isOpen ? 'none' : 'block';
   icon.innerHTML = isOpen ? '&#9654;' : '&#9660;';
+}
+
+// ---- Preview ----
+function isPreviewable(asset) {
+  if (!asset || !asset.url) return false;
+  const type = asset.type;
+  if (type === 'video' || type === 'stream-hls' || type === 'stream-dash') return true;
+  if (type === 'image') return true;
+  if (type === 'audio') return true;
+  return false;
+}
+
+function togglePreview(btn, index) {
+  const filtered = getFilteredAssets();
+  const asset = filtered[index];
+  if (!asset) return;
+
+  const preview = document.getElementById('preview-' + index);
+  if (!preview) return;
+
+  const isVisible = preview.classList.contains('visible');
+
+  if (isVisible) {
+    // Close preview
+    preview.classList.remove('visible');
+    preview.innerHTML = '';
+    btn.classList.remove('active');
+    btn.innerHTML = '&#9654;';
+    return;
+  }
+
+  // Open preview
+  btn.classList.add('active');
+  btn.innerHTML = '&#9660;';
+  preview.classList.add('visible');
+
+  const proxyUrl = `${API_BASE}/api/download?url=${encodeURIComponent(asset.url)}&referer=${encodeURIComponent(asset.referer || '')}`;
+
+  if (asset.type === 'video' || asset.type === 'stream-hls' || asset.type === 'stream-dash') {
+    preview.innerHTML = `
+      <video controls preload="metadata" crossorigin="anonymous">
+        <source src="${escapeHtml(proxyUrl)}" type="video/mp4">
+        Your browser does not support video playback.
+      </video>
+    `;
+    const video = preview.querySelector('video');
+    video.onerror = () => {
+      preview.innerHTML = '<div class="preview-error">Cannot preview this video. Try downloading instead.</div>';
+    };
+  } else if (asset.type === 'image') {
+    preview.innerHTML = `<img src="${escapeHtml(proxyUrl)}" alt="Preview" onerror="this.parentElement.innerHTML='<div class=\\'preview-error\\'>Cannot load image preview.</div>'">`;
+  } else if (asset.type === 'audio') {
+    preview.innerHTML = `
+      <audio controls preload="metadata" style="width:100%;padding:12px;">
+        <source src="${escapeHtml(proxyUrl)}">
+      </audio>
+    `;
+  }
+}
+
+function getFilteredAssets() {
+  if (currentFilter === 'all') return currentAssets;
+  return currentAssets.filter(a => {
+    if (currentFilter === 'video') return a.type === 'video';
+    if (currentFilter === 'stream') return a.type === 'stream-hls' || a.type === 'stream-dash';
+    if (currentFilter === 'audio') return a.type === 'audio';
+    if (currentFilter === 'image') return a.type === 'image';
+    if (currentFilter === 'embedded') return a.type === 'embedded-video';
+    return true;
+  });
 }
 
 // ---- Helpers ----
