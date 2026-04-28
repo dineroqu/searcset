@@ -1,66 +1,115 @@
-# WebGrab — Universal Asset Downloader
+# Polymarket Smart Sniper Bot v2.0
 
-A web-based universal asset downloader inspired by 1DM (Internet Download Manager), featuring advanced video detection, ad filtering, and a dark terminal-themed UI.
+Bot trading otomatis untuk Polymarket dengan antarmuka web modern. Dirancang untuk pemula dengan modal kecil ($2-$10) yang ingin profit konsisten $5-$20/hari dengan risiko minimal.
 
-## Features
+## Fitur Utama
 
-- **Deep URL Scanning** — Uses Playwright headless browser to navigate pages, intercept network requests, parse DOM, and scan inline scripts
-- **Advanced Video Detection** — Detects MP4, WebM, HLS (m3u8), DASH (mpd), embedded players (YouTube, Vimeo, etc.), and custom video players
-- **Ad & Tracker Filtering** — Built-in blocklist of 80+ ad/tracking domains plus pattern-based filtering
-- **Smart Asset Ranking** — Scores and prioritizes assets by type and size, auto-identifies the "main video"
-- **Download Queue** — Add multiple assets to queue with progress tracking
-- **Download History** — Persistent history stored in localStorage
-- **Terminal-themed UI** — Dark mode with green/cyan accents, monospace fonts, scanline effects
+- **Testnet/Mainnet Mode** — Data nyata, eksekusi simulasi (testnet) atau real (mainnet)
+- **Multi-AI Analyzer** — Support 8 provider AI (Anthropic, OpenAI, Gemini, Grok, OpenRouter, Mistral, Cohere, Ollama)
+- **Smart Position Sizing** — Kelly Criterion dengan safety cap
+- **Capital Protection** — Protected capital, profit lock 70/30, kill switch
+- **Real-time Dashboard** — Harga BTC/ETH live, market scanner, P&L tracking
+- **Semua konfigurasi via UI** — API keys, wallet, Telegram, risiko — semua di Settings
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, Playwright (Chromium)
-- **Frontend**: Vanilla HTML/CSS/JS (no framework dependencies)
-- **Scanning**: Playwright for headless browsing, network interception, DOM analysis
+| Layer    | Teknologi                                |
+|----------|------------------------------------------|
+| Frontend | React 18, TypeScript, Vite, TailwindCSS  |
+| Backend  | FastAPI, SQLAlchemy async, SQLite         |
+| Charts   | Recharts                                 |
+| State    | Zustand + React Query                    |
+| Deploy   | Docker + Docker Compose + Nginx          |
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Installation
+### Dengan Docker (Recommended)
 
 ```bash
 git clone <repo-url>
-cd web-asset-downloader
-npm install
-npx playwright install chromium
+cd polymarket-bot
+chmod +x scripts/setup.sh
+./scripts/setup.sh
 ```
 
-### Running
+Buka http://localhost di browser.
 
+### Development (Manual)
+
+**Backend:**
 ```bash
-npm start
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn backend.main:app --reload --port 8000
 ```
 
-Open http://localhost:3000 in your browser.
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## How It Works
+Buka http://localhost:5173 di browser.
 
-1. Enter a URL in the input field
-2. The backend launches a headless Chromium browser via Playwright
-3. It navigates to the page and:
-   - Intercepts all network responses (looking for media content types)
-   - Parses `<video>`, `<audio>`, `<source>`, `<iframe>` elements
-   - Scans `<meta>` OpenGraph tags and JSON-LD structured data
-   - Searches inline `<script>` content for media URLs
-   - Scrolls the page to trigger lazy-loaded content
-4. All detected assets are filtered (removing ads/trackers), deduplicated, scored, and ranked
-5. Results are displayed in the terminal-themed UI with filter tabs and download controls
+## Konfigurasi
 
-## Limitations
+Semua pengaturan dikelola melalui UI web di halaman **Settings**:
 
-- Only downloads publicly accessible assets
-- Does not bypass DRM protection
-- Does not bypass login/authentication walls
-- HLS/DASH streams are detected but streamed as-is (no server-side conversion)
+### Tab Mode Operasi
+- Toggle Testnet/Mainnet
+- Reset virtual balance (testnet)
+
+### Tab AI Providers
+- Tambah/hapus provider AI
+- Masukkan API key (terenkripsi)
+- Test koneksi
+- Atur urutan fallback prioritas
+
+### Tab Modal & Risiko
+- Protected capital & trading capital
+- Min edge threshold
+- Max % per trade
+- Daily target & kill switch
+- Durasi trading & max posisi bersamaan
+
+### Tab Wallet
+- Input private key (terenkripsi AES)
+- Auto-detect wallet address
+
+### Tab Notifikasi
+- Telegram Bot Token & Chat ID
+- Pilih event yang mau dikirim notifikasi
+- Test kirim notifikasi
+
+## Arsitektur
+
+```
+polymarket-bot/
+├── backend/           # FastAPI server
+│   ├── core/          # Trading engine
+│   ├── api/routes/    # REST endpoints
+│   ├── database/      # SQLAlchemy models
+│   └── notifications/ # Telegram bot
+├── frontend/          # React app
+│   └── src/
+│       ├── pages/     # Dashboard, Trades, Analytics, Settings
+│       ├── components/# UI components
+│       ├── store/     # Zustand stores
+│       └── hooks/     # React hooks
+├── docker-compose.yml
+├── nginx.conf
+└── scripts/           # Setup & deploy
+```
+
+## Keamanan
+
+- Private key dienkripsi sebelum disimpan
+- JWT authentication untuk akses API
+- Tidak ada hardcoded API key di source code
+- Gunakan wallet DEDICATED untuk bot ini
 
 ## License
 

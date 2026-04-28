@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --coral: #FF6B6B;
+  --coral-light: #FFE0DC;
+  --coral-dark: #E55555;
+  --bg-primary: #FFFFFF;
+  --bg-surface: #FAFAFA;
+  --bg-dark: #1A1A1A;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --border: #E8E8E8;
+  --success: #4CAF82;
+  --warning: #F5A623;
+}
+
+.dark {
+  --bg-primary: #1A1A1A;
+  --bg-surface: #252525;
+  --text-primary: #F5F5F5;
+  --text-secondary: #999999;
+  --border: #333333;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+/* Animasi progress bar */
+@keyframes progress-fill {
+  from { width: 0%; }
+}
+
+.animate-progress {
+  animation: progress-fill 1s ease-out;
+}
+
+/* Blink effect untuk P&L positif */
+@keyframes blink-coral {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(255, 107, 107, 0.1); }
+}
+
+.blink-positive {
+  animation: blink-coral 2s ease-in-out 3;
+}
