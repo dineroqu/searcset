@@ -5,7 +5,7 @@ Mengambil data market, harga, dan orderbook dari Polymarket
 import logging
 from typing import Optional
 import httpx
-from backend.config import POLYMARKET_API_BASE, POLYMARKET_GAMMA_API
+from config import POLYMARKET_API_BASE, POLYMARKET_GAMMA_API
 
 logger = logging.getLogger(__name__)
 

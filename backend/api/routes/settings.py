@@ -7,10 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.db import get_session
-from backend.database.models import Settings, AIProvider
-from backend.core.ai_analyzer import AIAnalyzer
-from backend.notifications.telegram_bot import TelegramNotifier
+from database.db import get_session
+from database.models import Settings, AIProvider
+from core.ai_analyzer import AIAnalyzer
+from notifications.telegram_bot import TelegramNotifier
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 

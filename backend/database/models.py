@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import (
     Column, Integer, String, Float, Boolean, DateTime, Text, JSON
 )
-from backend.database.db import Base
+from database.db import Base
 
 
 class Settings(Base):

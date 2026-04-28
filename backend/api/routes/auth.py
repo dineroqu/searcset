@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from jose import jwt
 from pydantic import BaseModel
-from backend.config import settings
+from config import settings
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 

@@ -6,7 +6,7 @@ import logging
 from datetime import date
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.models import Settings, Trade
+from database.models import Settings, Trade
 
 logger = logging.getLogger(__name__)
 

@@ -1,16 +1,27 @@
 """
 FastAPI Entry Point — Server utama Polymarket Smart Sniper Bot
 """
+import sys
+import os
+# Pastikan parent directory ada di sys.path supaya 'backend.X' import jalan
+# baik dari root project maupun dari dalam folder backend/
+_this_dir = os.path.dirname(os.path.abspath(__file__))
+_parent_dir = os.path.dirname(_this_dir)
+if _parent_dir not in sys.path:
+    sys.path.insert(0, _parent_dir)
+if _this_dir not in sys.path:
+    sys.path.insert(0, _this_dir)
+
 import logging
 import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.database.db import init_db
-from backend.api.routes import auth, dashboard, trades, settings, analytics
-from backend.api.websocket import websocket_endpoint, ws_manager
-from backend.core.price_feed import price_feed
+from database.db import init_db
+from api.routes import auth, dashboard, trades, settings, analytics
+from api.websocket import websocket_endpoint, ws_manager
+from core.price_feed import price_feed
 
 # Setup logging
 logging.basicConfig(
@@ -49,8 +60,8 @@ async def lifespan(app: FastAPI):
     logger.info("Database diinisialisasi")
 
     # Buat default settings jika belum ada
-    from backend.database.db import async_session
-    from backend.database.models import Settings
+    from database.db import async_session
+    from database.models import Settings
     from sqlalchemy import select
 
     async with async_session() as session:

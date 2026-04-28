@@ -7,7 +7,7 @@ import asyncio
 from typing import Callable, Optional
 import websockets
 
-from backend.config import BINANCE_WS_URL, BINANCE_STREAMS
+from config import BINANCE_WS_URL, BINANCE_STREAMS
 
 logger = logging.getLogger(__name__)
 

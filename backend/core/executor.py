@@ -6,7 +6,7 @@ import asyncio
 import uuid
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.models import Trade, Settings
+from database.models import Trade, Settings
 from sqlalchemy import select
 
 logger = logging.getLogger(__name__)

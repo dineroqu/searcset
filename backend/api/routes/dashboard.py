@@ -3,12 +3,12 @@ Dashboard Routes — Endpoint untuk halaman utama
 """
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.db import get_session
-from backend.core.capital_manager import CapitalManager
-from backend.core.risk_manager import RiskManager
-from backend.core.stop_controller import StopController
-from backend.core.polymarket_client import PolymarketClient
-from backend.core.price_feed import price_feed
+from database.db import get_session
+from core.capital_manager import CapitalManager
+from core.risk_manager import RiskManager
+from core.stop_controller import StopController
+from core.polymarket_client import PolymarketClient
+from core.price_feed import price_feed
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 @router.get("/capital")
 async def get_capital(session: AsyncSession = Depends(get_session)):
     """Dapatkan status modal saat ini"""
-    from backend.database.models import Settings
+    from database.models import Settings
     from sqlalchemy import select
 
     result = await session.execute(select(Settings).where(Settings.id == 1))
@@ -30,7 +30,7 @@ async def get_capital(session: AsyncSession = Depends(get_session)):
 @router.get("/risk")
 async def get_risk_status(session: AsyncSession = Depends(get_session)):
     """Dapatkan status risiko saat ini"""
-    from backend.database.models import Settings
+    from database.models import Settings
     from sqlalchemy import select
 
     result = await session.execute(select(Settings).where(Settings.id == 1))

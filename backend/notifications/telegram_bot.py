@@ -6,7 +6,7 @@ import logging
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.models import Settings
+from database.models import Settings
 
 logger = logging.getLogger(__name__)
 

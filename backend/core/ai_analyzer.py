@@ -9,7 +9,7 @@ from datetime import datetime
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.models import AIProvider
+from database.models import AIProvider
 
 logger = logging.getLogger(__name__)
 

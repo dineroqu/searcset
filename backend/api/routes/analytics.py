@@ -5,8 +5,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.db import get_session
-from backend.database.models import Trade, DailyStats, Settings
+from database.db import get_session
+from database.models import Trade, DailyStats, Settings
 
 router = APIRouter(prefix="/api/analytics", tags=["analytics"])
 

@@ -28,7 +28,7 @@ async def init_db():
     """Inisialisasi database — buat tabel jika belum ada"""
     os.makedirs(DATABASE_DIR, exist_ok=True)
     async with engine.begin() as conn:
-        from backend.database.models import Base  # noqa: F811
+        from database.models import Base  # noqa: F811
         await conn.run_sync(Base.metadata.create_all)
 
 
